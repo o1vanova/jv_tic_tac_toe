@@ -30,9 +30,7 @@ class TicTacToeField {
     TicTacToeField(FieldState[][] field) {
         this.field = new FieldState[3][3];
         for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                this.field[row][col] = field[row][col];
-            }
+            System.arraycopy(field[row], 0, this.field[row], 0, 3);
         }
     }
 
@@ -131,13 +129,9 @@ class TicTacToeField {
             return true;
         }
 
-        if (get(1, 3) == side &&
-            get(2, 2) == side &&
-            get(3, 1) == side) {
-            return true;
-        }
-
-        return false;
+        return get(1, 3) == side &&
+                get(2, 2) == side &&
+                get(3, 1) == side;
     }
 
     boolean isDraw() {
@@ -249,7 +243,7 @@ class Clue {
 }
 
 public class TicTacToeTest extends StageTest<Clue> {
-    public TicTacToeTest() throws Exception {
+    public TicTacToeTest() {
         super(Main.class);
     }
 
@@ -270,11 +264,11 @@ public class TicTacToeTest extends StageTest<Clue> {
         if (index == -1) {
             return "";
         }
-        String fullInput = "";
+        StringBuilder fullInput = new StringBuilder();
         for (int i = index; i < index + 9; i++) {
-            fullInput += inputs[i % inputs.length] + "\n";
+            fullInput.append(inputs[i % inputs.length]).append("\n");
         }
-        return fullInput;
+        return fullInput.toString();
     }
 
     @Override
@@ -286,11 +280,11 @@ public class TicTacToeTest extends StageTest<Clue> {
         for (String input : inputs) {
 
             Random random = new Random();
-            String randomInput = "";
+            StringBuilder randomInput = new StringBuilder();
             for (int j = 0; j < 10; j++) {
                 int randX = random.nextInt(4) + 1;
                 int randY = random.nextInt(4) + 1;
-                randomInput += randX + " " + randY + "\n";
+                randomInput.append(randX).append(" ").append(randY).append("\n");
             }
 
             String fullMoveInput = randomInput
@@ -305,13 +299,8 @@ public class TicTacToeTest extends StageTest<Clue> {
                 fullMoveInput = "4 " + i + "\n" + fullMoveInput;
             }
 
-            String fullGameInput = "";
-            for (int j = 0; j < 9; j++) {
-                fullGameInput += fullMoveInput;
-            }
-
             tests.add(new TestCase<Clue>()
-                .setInput(fullGameInput)
+                .setInput(fullMoveInput.repeat(9))
                 .setAttach(new Clue(x, y)));
 
             i++;
